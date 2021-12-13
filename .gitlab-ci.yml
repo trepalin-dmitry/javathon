@@ -6,14 +6,7 @@ build-job:
   stage: build
   script:
     - /app/scripts/build.sh
-  only: 
-    - main
-
-test-app:
-  stage: test 
-  script:
     - echo "Try to run app"
     - /app/scripts/test.sh
   only: 
     - main
-
