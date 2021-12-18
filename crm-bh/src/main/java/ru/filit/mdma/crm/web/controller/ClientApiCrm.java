@@ -48,7 +48,49 @@ public class ClientApiCrm implements ClientApi {
 
     @Override
     public ResponseEntity<ClientDto> getClient(ClientIdDto clientIdDto) {
-        throw new RuntimeException();
+        var clientDto = defaultApi.getClient(new ru.filit.mdma.dm.web.dto.ClientSearchDto()
+                .id(clientIdDto.getId())).get(0);
+
+        var result = new ClientDto()
+                .id(clientDto.getId())
+                .lastname(clientDto.getLastname())
+                .firstname(clientDto.getFirstname())
+                .patronymic(clientDto.getPatronymic())
+                .birthDate(clientDto.getBirthDate())
+                .passportSeries(clientDto.getPassportSeries())
+                .passportNumber(clientDto.getPassportNumber())
+                .inn(clientDto.getInn())
+                .address(clientDto.getAddress());
+
+        var clientIdDto2 = new ru.filit.mdma.dm.web.dto.ClientIdDto()
+                .id(clientIdDto.getId());
+
+        for (ru.filit.mdma.dm.web.dto.ContactDto contactDto : defaultApi.getContact(clientIdDto2)) {
+            result.addContactsItem(new ContactDto()
+                    .id(contactDto.getId())
+                    .clientId(contactDto.getClientId())
+                    .type(contactDto.getType())
+                    .value(contactDto.getValue())
+                    .shortcut(contactDto.getShortcut())
+            );
+        }
+
+        for (var accountDto : defaultApi.getAccount(clientIdDto2)) {
+            result.addAccountsItem(new AccountDto()
+                    .number(accountDto.getNumber())
+                    .clientId(accountDto.getClientId())
+                    .type(accountDto.getType())
+                    .currency(accountDto.getCurrency())
+                    .status(accountDto.getStatus())
+                    .openDate(accountDto.getOpenDate())
+                    .closeDate(accountDto.getCloseDate())
+                    .deferment(accountDto.getDeferment())
+                    .shortcut(accountDto.getShortcut())
+                    .balanceAmount(accountDto.getClientId())
+            );
+        }
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
