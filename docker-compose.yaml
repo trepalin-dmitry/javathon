@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  crm-bh:
+    build: crm-bh/.
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dm
+  dm:
+    build: dm/.
+    ports:
+      - "8081:8081"
